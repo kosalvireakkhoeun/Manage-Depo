@@ -82,8 +82,7 @@ function handleThumbnailClick(event: MouseEvent) {
       </div>
     </div>
 
-
-    <div class="p-4 flex-1 flex flex-col">
+    <div class="p-1 flex-1 flex flex-col">
       <div
         v-if="food.location"
         class="mb-2 flex items-center gap-1.5 text-sm text-neutral-600 dark:text-neutral-400"
@@ -92,10 +91,7 @@ function handleThumbnailClick(event: MouseEvent) {
         <span class="truncate">{{ food.location }}</span>
       </div>
 
-      <p
-        v-if="food.notes"
-        class="text-sm text-neutral-700 dark:text-neutral-300 flex-1"
-      >
+      <p v-if="food.notes" class="text-sm text-neutral-700 dark:text-neutral-300 flex-1">
         {{ food.notes }}
       </p>
 
@@ -105,3 +101,9 @@ function handleThumbnailClick(event: MouseEvent) {
     </div>
   </UCard>
 </template>
+
+<style scoped>
+:deep(div[data-slot='body']) {
+  padding: calc(var(--spacing) * 4) !important;
+}
+</style>

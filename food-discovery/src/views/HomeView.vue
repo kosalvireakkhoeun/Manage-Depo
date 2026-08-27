@@ -33,8 +33,8 @@ onMounted(() => {
       <p class="text-neutral-600 dark:text-neutral-400 mt-1">{{ foods.length }} food spots found</p>
     </div>
 
-    <div v-if="loading" class="flex justify-center py-12">
-      <USpinner size="xl" />
+    <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+      <FoodCardSkeleton v-for="i in 4" :key="i" />
     </div>
 
     <div
@@ -43,7 +43,7 @@ onMounted(() => {
     >
       <i class="i-lucide-search text-4xl mb-2 block" />
       <p>No food spots yet. Click "Get Foods" to load.</p>
-      <UButton @click="getFoods" class="mt-4">Get Foods</UButton>
+      <UButton @click="getFoods" class="mt-4">Add Food</UButton>
     </div>
 
     <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
