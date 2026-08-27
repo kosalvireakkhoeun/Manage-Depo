@@ -1,14 +1,13 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
 import { supabase } from '../utils/supabase'
 
-const todos = ref([])
+const food = ref([])
 
-async function getTodos() {
+async function getFoods() {
   const { data, error } = await supabase.from('food_spots').select()
-  console.log(data, error)
   if (!error && data != null) {
-    todos.value = data
+    food.value = data
   }
 }
 </script>
@@ -16,8 +15,8 @@ async function getTodos() {
 <template>
   <main>
     <div>
-      {{ todos }}
+      {{ food }}
     </div>
-    <UButton @click="getTodos">Get Todos</UButton>
+    <UButton @click="getFoods">Get Foods</UButton>
   </main>
 </template>
