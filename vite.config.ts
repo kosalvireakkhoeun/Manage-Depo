@@ -7,7 +7,7 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 
 export default defineConfig({
   plugins: [vue(), ui(), vueDevTools()],
-  base: '/vue-github-action/', // [!code focus]
+  base: '/Manage-Depo/', // [!code focus]
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
