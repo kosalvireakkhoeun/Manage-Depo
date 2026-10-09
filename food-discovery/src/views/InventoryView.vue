@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useInventoryStore } from '@/stores/inventory'
 import { filterProducts } from '@/utils/productFilters'
+import { paginateItems } from '@/utils/pagination'
 
 const inventoryStore = useInventoryStore()
 
@@ -11,9 +12,42 @@ const filters = reactive({
   categoryId: '',
 })
 
+const currentPage = ref(1)
+const perPage = ref(10)
+const perPageOptions = [5, 10, 20, 50]
+
 const filteredProducts = computed(() => filterProducts(inventoryStore.products, filters))
 
+const paginatedProducts = computed(() =>
+  paginateItems(filteredProducts.value, currentPage.value, perPage.value),
+)
+
 const isLoading = computed(() => inventoryStore.loadingProducts || inventoryStore.loadingCategories)
+
+function goToPreviousPage() {
+  currentPage.value = Math.max(1, currentPage.value - 1)
+}
+
+function goToNextPage() {
+  currentPage.value = Math.min(paginatedProducts.value.totalPages, currentPage.value + 1)
+}
+
+watch(perPage, () => {
+  currentPage.value = 1
+})
+
+watch(
+  () => [filters.nameQuery, filters.barcodeQuery, filters.categoryId],
+  () => {
+    currentPage.value = 1
+  },
+)
+
+watch(paginatedProducts, (pagination) => {
+  if (currentPage.value !== pagination.currentPage) {
+    currentPage.value = pagination.currentPage
+  }
+})
 
 function formatPrice(value: number) {
   return new Intl.NumberFormat('en-US', {
@@ -82,7 +116,7 @@ onMounted(async () => {
     </div>
 
     <div
-      v-else-if="filteredProducts.length === 0"
+      v-else-if="paginatedProducts.totalItems === 0"
       class="rounded-xl border border-neutral-200 bg-white p-8 text-center text-neutral-500 dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-400"
     >
       No products found for your current filters.
@@ -91,7 +125,7 @@ onMounted(async () => {
     <div v-else class="space-y-4">
       <div class="grid gap-3 md:hidden">
         <article
-          v-for="product in filteredProducts"
+          v-for="product in paginatedProducts.pageItems"
           :key="product.id"
           class="rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-950"
         >
@@ -152,7 +186,7 @@ onMounted(async () => {
             </tr>
           </thead>
           <tbody class="divide-y divide-neutral-100 dark:divide-neutral-800">
-            <tr v-for="product in filteredProducts" :key="product.id" class="text-sm">
+            <tr v-for="product in paginatedProducts.pageItems" :key="product.id" class="text-sm">
               <td class="px-4 py-3">
                 <div class="h-12 w-12 overflow-hidden rounded-md border border-neutral-200 dark:border-neutral-700">
                   <img
@@ -175,6 +209,47 @@ onMounted(async () => {
             </tr>
           </tbody>
         </table>
+      </div>
+
+      <div class="flex flex-col gap-3 rounded-xl border border-neutral-200 bg-white p-3 dark:border-neutral-800 dark:bg-neutral-950 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex items-center gap-2 text-sm">
+          <label for="inventory-per-page" class="text-neutral-500 dark:text-neutral-400">Per page</label>
+          <select
+            id="inventory-per-page"
+            v-model.number="perPage"
+            class="rounded-md border border-neutral-300 bg-white px-2 py-1 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+          >
+            <option v-for="option in perPageOptions" :key="option" :value="option">
+              {{ option }}
+            </option>
+          </select>
+        </div>
+
+        <div class="flex items-center gap-2 text-sm">
+          <span class="text-neutral-500 dark:text-neutral-400">
+            Showing {{ paginatedProducts.startItem }}-{{ paginatedProducts.endItem }} of
+            {{ paginatedProducts.totalItems }}
+          </span>
+          <button
+            type="button"
+            class="rounded-md border border-neutral-300 px-3 py-1 disabled:cursor-not-allowed disabled:opacity-60 dark:border-neutral-700"
+            :disabled="paginatedProducts.currentPage === 1"
+            @click="goToPreviousPage"
+          >
+            Previous
+          </button>
+          <span class="text-neutral-500 dark:text-neutral-400">
+            {{ paginatedProducts.currentPage }}/{{ paginatedProducts.totalPages }}
+          </span>
+          <button
+            type="button"
+            class="rounded-md border border-neutral-300 px-3 py-1 disabled:cursor-not-allowed disabled:opacity-60 dark:border-neutral-700"
+            :disabled="paginatedProducts.currentPage === paginatedProducts.totalPages"
+            @click="goToNextPage"
+          >
+            Next
+          </button>
+        </div>
       </div>
     </div>
   </section>

@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import type { UserRole } from '@/types/inventory'
 import { useAuthStore } from '@/stores/auth'
 import { useTheme } from '@/composables/useTheme'
+import appLogo from '@/assets/logo.jpeg'
 
 interface NavigationItem {
   label: string
@@ -87,9 +88,10 @@ onMounted(() => {
             : 'md:w-64',
         ]"
       >
-        <div class="mb-8">
-          <h1 class="text-lg font-semibold">Inventory Store</h1>
-          <p class="text-sm text-neutral-500 dark:text-neutral-400">Management Portal</p>
+        <div class="mb-8 flex justify-center items-center flex-col">
+          <img :src="appLogo" alt="Inventory Store logo" class="mb-3 h-28 w-28 rounded-full" />
+          <h1 class="text-lg font-semibold">ខឿន ផល្លីន</h1>
+          <p class="text-sm text-neutral-500 dark:text-neutral-400">Inventory Management</p>
         </div>
 
         <nav class="space-y-2">

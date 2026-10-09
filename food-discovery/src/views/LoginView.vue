@@ -3,6 +3,7 @@ import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useTheme } from '@/composables/useTheme'
+import appLogo from '@/assets/logo.jpeg'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -60,6 +61,7 @@ onMounted(() => {
     <div class="w-full max-w-md rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-950">
       <div class="mb-6 flex items-center justify-between">
         <div>
+          <img :src="appLogo" alt="Inventory Store logo" class="mb-3 h-12 w-auto rounded-md" />
           <h1 class="text-2xl font-bold">Inventory Management</h1>
           <p class="text-sm text-neutral-500 dark:text-neutral-400">Sign in to continue</p>
         </div>
