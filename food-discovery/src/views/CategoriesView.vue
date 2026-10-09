@@ -65,8 +65,12 @@ onMounted(async () => {
 
 <template>
   <section class="grid gap-4 lg:grid-cols-[minmax(280px,360px)_minmax(0,1fr)]">
-    <article class="rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-950">
-      <h3 class="text-lg font-semibold">{{ editingCategoryId ? 'Edit Category' : 'Add Category' }}</h3>
+    <article
+      class="rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-950"
+    >
+      <h3 class="text-lg font-semibold">
+        {{ editingCategoryId ? 'Edit Category' : 'Add Category' }}
+      </h3>
       <p class="mb-4 text-sm text-neutral-500 dark:text-neutral-400">
         Manage product categories for inventory filters and product classification.
       </p>
@@ -116,7 +120,9 @@ onMounted(async () => {
       </p>
     </article>
 
-    <article class="rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-950">
+    <article
+      class="rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-950"
+    >
       <h3 class="mb-4 text-lg font-semibold">Category Management</h3>
 
       <div

@@ -7,8 +7,7 @@ export function filterProducts(products: Product[], filters: ProductFilterInput)
 
   return products.filter((product) => {
     const matchesName =
-      normalizedNameQuery.length === 0 ||
-      product.name.toLowerCase().includes(normalizedNameQuery)
+      normalizedNameQuery.length === 0 || product.name.toLowerCase().includes(normalizedNameQuery)
 
     const matchesBarcode =
       normalizedBarcodeQuery.length === 0 ||

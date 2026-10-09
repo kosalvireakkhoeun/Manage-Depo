@@ -58,7 +58,9 @@ onMounted(() => {
   <div
     class="flex min-h-screen items-center justify-center bg-neutral-100 px-4 text-neutral-900 dark:bg-neutral-900 dark:text-neutral-100"
   >
-    <div class="w-full max-w-md rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-950">
+    <div
+      class="w-full max-w-md rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-950"
+    >
       <div class="mb-6 flex items-center justify-between">
         <div>
           <img :src="appLogo" alt="Inventory Store logo" class="mb-3 h-12 w-auto rounded-md" />
@@ -100,7 +102,10 @@ onMounted(() => {
           />
         </div>
 
-        <p v-if="errorMessage" class="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-900/40 dark:text-red-200">
+        <p
+          v-if="errorMessage"
+          class="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-900/40 dark:text-red-200"
+        >
           {{ errorMessage }}
         </p>
 

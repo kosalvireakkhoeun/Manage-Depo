@@ -83,7 +83,11 @@ function mapProductPayload(input: ProductMutationInput) {
 }
 
 function sanitizeFileName(fileName: string): string {
-  return fileName.trim().replace(/\s+/g, '-').replace(/[^a-zA-Z0-9._-]/g, '').toLowerCase()
+  return fileName
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-zA-Z0-9._-]/g, '')
+    .toLowerCase()
 }
 
 function getStoragePathFromPublicUrl(url: string): string | null {

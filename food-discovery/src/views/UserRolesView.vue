@@ -24,18 +24,25 @@ onMounted(async () => {
 
 <template>
   <section class="space-y-4">
-    <article class="rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-950">
+    <article
+      class="rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-950"
+    >
       <h3 class="text-lg font-semibold">User Role Management</h3>
       <p class="text-sm text-neutral-500 dark:text-neutral-400">
         Toggle each account role between staff and admin.
       </p>
     </article>
 
-    <p v-if="inventoryStore.error" class="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-900/40 dark:text-red-200">
+    <p
+      v-if="inventoryStore.error"
+      class="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-900/40 dark:text-red-200"
+    >
       {{ inventoryStore.error }}
     </p>
 
-    <article class="overflow-x-auto rounded-xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-950">
+    <article
+      class="overflow-x-auto rounded-xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-950"
+    >
       <table class="min-w-full divide-y divide-neutral-200 text-sm dark:divide-neutral-800">
         <thead>
           <tr class="text-left text-xs uppercase text-neutral-500 dark:text-neutral-400">
