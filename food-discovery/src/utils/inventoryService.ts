@@ -4,6 +4,8 @@ import type {
   InventoryStats,
   Product,
   ProductMutationInput,
+  ProductSearchInput,
+  ProductSearchResult,
   Profile,
   UserRole,
 } from '@/types/inventory'
@@ -22,9 +24,15 @@ interface ProductRow {
   retail_price: number | string | null
   unit: string
   created_at: string
+  category_name?: string | null
   categories?: {
     name: string
   } | null
+}
+
+interface SearchProductsRpcResponse {
+  items?: ProductRow[] | null
+  totalItems?: number | string | null
 }
 
 function toPrice(value: number | string | null): number {
@@ -52,7 +60,7 @@ function normalizeProduct(row: ProductRow): Product {
     description: row.description,
     image_url: row.image_url,
     category_id: row.category_id,
-    category_name: row.categories?.name ?? null,
+    category_name: row.category_name ?? row.categories?.name ?? null,
     cost_price: toPrice(row.cost_price),
     wholesale_price: toPrice(row.wholesale_price),
     retail_price: toPrice(row.retail_price),
@@ -182,6 +190,33 @@ export async function listProducts(): Promise<Product[]> {
   }
 
   return (data ?? []).map((product) => normalizeProduct(product as ProductRow))
+}
+
+export async function searchProducts(input: ProductSearchInput): Promise<ProductSearchResult> {
+  const nameQuery = input.nameQuery.trim()
+  const barcodeQuery = input.barcodeQuery.trim()
+  const categoryId = input.categoryId.trim()
+
+  const { data, error } = await supabase.rpc('search_products', {
+    p_name: nameQuery || null,
+    p_barcode: barcodeQuery || null,
+    p_category_id: categoryId || null,
+    p_page: input.page,
+    p_per_page: input.perPage,
+  })
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  const payload = (data ?? {}) as SearchProductsRpcResponse
+  const items = (payload.items ?? []).map((product) => normalizeProduct(product))
+  const totalItems = Number(payload.totalItems ?? 0)
+
+  return {
+    items,
+    totalItems: Number.isFinite(totalItems) ? totalItems : 0,
+  }
 }
 
 export async function createProduct(

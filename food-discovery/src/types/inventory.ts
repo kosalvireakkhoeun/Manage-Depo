@@ -45,6 +45,16 @@ export interface ProductFilterInput {
   categoryId: string
 }
 
+export interface ProductSearchInput extends ProductFilterInput {
+  page: number
+  perPage: number
+}
+
+export interface ProductSearchResult {
+  items: Product[]
+  totalItems: number
+}
+
 export interface InventoryStats {
   productCount: number
   categoryCount: number

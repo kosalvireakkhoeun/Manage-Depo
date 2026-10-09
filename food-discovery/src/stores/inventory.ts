@@ -4,6 +4,7 @@ import type {
   InventoryStats,
   Product,
   ProductMutationInput,
+  ProductSearchInput,
   Profile,
   UserRole,
 } from '@/types/inventory'
@@ -14,8 +15,8 @@ import {
   deleteProduct,
   getInventoryStats,
   listCategories,
-  listProducts,
   listProfiles,
+  searchProducts,
   updateCategory,
   updateProduct,
   updateProfileRole,
@@ -24,6 +25,8 @@ import { useAuthStore } from '@/stores/auth'
 
 interface InventoryState {
   products: Product[]
+  totalProducts: number
+  productSearch: ProductSearchInput
   categories: Category[]
   profiles: Profile[]
   stats: InventoryStats | null
@@ -35,6 +38,14 @@ interface InventoryState {
   error: string | null
 }
 
+const DEFAULT_PRODUCT_SEARCH: ProductSearchInput = {
+  nameQuery: '',
+  barcodeQuery: '',
+  categoryId: '',
+  page: 1,
+  perPage: 10,
+}
+
 function sortCategories(categories: Category[]): Category[] {
   return [...categories].sort((left, right) => left.name.localeCompare(right.name))
 }
@@ -42,6 +53,8 @@ function sortCategories(categories: Category[]): Category[] {
 export const useInventoryStore = defineStore('inventory', {
   state: (): InventoryState => ({
     products: [],
+    totalProducts: 0,
+    productSearch: { ...DEFAULT_PRODUCT_SEARCH },
     categories: [],
     profiles: [],
     stats: null,
@@ -62,16 +75,32 @@ export const useInventoryStore = defineStore('inventory', {
   },
 
   actions: {
+    getMappedCategoryName(categoryId: string | null): string | undefined {
+      return this.categories.find((category) => category.id === categoryId)?.name
+    },
+
     clearError() {
       this.error = null
     },
 
-    async fetchProducts() {
+    async fetchProducts(partialSearch?: Partial<ProductSearchInput>) {
       this.loadingProducts = true
       this.error = null
 
       try {
-        this.products = await listProducts()
+        const searchInput = {
+          ...this.productSearch,
+          ...partialSearch,
+        }
+
+        searchInput.page = Math.max(1, searchInput.page || 1)
+        searchInput.perPage = Math.max(1, searchInput.perPage || DEFAULT_PRODUCT_SEARCH.perPage)
+
+        this.productSearch = searchInput
+
+        const result = await searchProducts(searchInput)
+        this.products = result.items
+        this.totalProducts = result.totalItems
       } catch (error) {
         this.error = error instanceof Error ? error.message : 'Failed to load products.'
       } finally {
@@ -131,13 +160,15 @@ export const useInventoryStore = defineStore('inventory', {
           ? await updateProduct(id, input, imageFile)
           : await createProduct(input, imageFile)
 
-        const existingIndex = this.products.findIndex((existingProduct) => existingProduct.id === product.id)
+        const existingIndex = this.products.findIndex(
+          (existingProduct) => existingProduct.id === product.id,
+        )
 
         if (existingIndex >= 0) {
           this.products.splice(existingIndex, 1, product)
-        } else {
-          this.products.unshift(product)
         }
+
+        await this.fetchProducts()
 
         return product
       } catch (error) {
@@ -154,7 +185,7 @@ export const useInventoryStore = defineStore('inventory', {
 
       try {
         await deleteProduct(product)
-        this.products = this.products.filter((existingProduct) => existingProduct.id !== product.id)
+        await this.fetchProducts()
       } catch (error) {
         this.error = error instanceof Error ? error.message : 'Failed to delete product.'
         throw error

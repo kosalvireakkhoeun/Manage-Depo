@@ -13,8 +13,8 @@ interface NavigationItem {
 }
 
 const navigationItems: NavigationItem[] = [
-  { label: 'Dashboard', to: '/dashboard', roles: ['admin'] },
   { label: 'Inventory', to: '/inventory' },
+  { label: 'Dashboard', to: '/dashboard', roles: ['admin'] },
   { label: 'Categories', to: '/categories', roles: ['admin'] },
   { label: 'User Roles', to: '/user-roles', roles: ['admin'] },
 ]
