@@ -24,6 +24,7 @@ const authStore = useAuthStore()
 const { isDarkTheme, initializeTheme, toggleTheme } = useTheme()
 
 const isSidebarOpen = ref(false)
+const isDesktopSidebarCollapsed = ref(false)
 
 const visibleNavigationItems = computed(() =>
   navigationItems.filter((item) => {
@@ -47,6 +48,15 @@ function closeSidebar() {
   isSidebarOpen.value = false
 }
 
+function toggleSidebar() {
+  if (typeof window !== 'undefined' && window.matchMedia('(min-width: 768px)').matches) {
+    isDesktopSidebarCollapsed.value = !isDesktopSidebarCollapsed.value
+    return
+  }
+
+  isSidebarOpen.value = !isSidebarOpen.value
+}
+
 async function handleSignOut() {
   await authStore.signOut()
   await router.push('/login')
@@ -58,7 +68,9 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-neutral-100 text-neutral-900 dark:bg-neutral-900 dark:text-neutral-100">
+  <div
+    class="min-h-screen bg-neutral-100 text-neutral-900 dark:bg-neutral-900 dark:text-neutral-100"
+  >
     <div class="flex min-h-screen">
       <div
         v-if="isSidebarOpen"
@@ -67,8 +79,13 @@ onMounted(() => {
       />
 
       <aside
-        class="fixed inset-y-0 left-0 z-40 w-64 transform border-r border-neutral-200 bg-white px-4 py-6 transition-transform dark:border-neutral-800 dark:bg-neutral-950 md:static md:translate-x-0"
-        :class="isSidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+        class="fixed inset-y-0 left-0 z-40 w-64 transform border-r border-neutral-200 bg-white px-4 py-6 transition-all dark:border-neutral-800 dark:bg-neutral-950 md:static md:translate-x-0"
+        :class="[
+          isSidebarOpen ? 'translate-x-0' : '-translate-x-full',
+          isDesktopSidebarCollapsed
+            ? 'md:w-0 md:overflow-hidden md:border-r-0 md:px-0 md:py-0'
+            : 'md:w-64',
+        ]"
       >
         <div class="mb-8">
           <h1 class="text-lg font-semibold">Inventory Store</h1>
@@ -100,8 +117,8 @@ onMounted(() => {
           <div class="flex items-center gap-3">
             <button
               type="button"
-              class="rounded-md border border-neutral-300 px-2 py-1 text-sm dark:border-neutral-700 md:hidden"
-              @click="isSidebarOpen = true"
+              class="rounded-md border border-neutral-300 px-2 py-1 text-sm dark:border-neutral-700 cursor-pointer"
+              @click="toggleSidebar"
             >
               Menu
             </button>
@@ -126,7 +143,9 @@ onMounted(() => {
               <div
                 class="absolute right-0 mt-2 w-52 rounded-md border border-neutral-200 bg-white p-3 shadow-lg dark:border-neutral-700 dark:bg-neutral-900"
               >
-                <p class="truncate text-sm text-neutral-600 dark:text-neutral-300">{{ userEmail }}</p>
+                <p class="truncate text-sm text-neutral-600 dark:text-neutral-300">
+                  {{ userEmail }}
+                </p>
                 <button
                   type="button"
                   class="mt-3 w-full rounded-md bg-neutral-900 px-3 py-2 text-sm text-white dark:bg-white dark:text-neutral-900"
